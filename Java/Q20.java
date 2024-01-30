@@ -22,6 +22,6 @@ public class Q20 {
                 stack.pop();
             }
         }
-        return stack.isEmpty()
+        return stack.isEmpty();
     }
 }
