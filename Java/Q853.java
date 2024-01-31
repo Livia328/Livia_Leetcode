@@ -46,4 +46,37 @@ public class Q853 {
             this.spe = spe;
         }
     }
+
+    /**
+     * Input: target = 12, position = [10,8,0,5,3], speed = [2,4,1,1,3]
+        Output: 3
+
+        int[n][2] //[0]->position [1]->car
+        sort -> position
+        pos  10 8 5 3 0
+        spd   2 4 1 3 1
+        time  1 1   7 3   12 ->3 fleet.  7 9 8 
+            prelarge -> 12 
+            count -> 3
+
+        其实不用stack，只要数着里面有多少个non-asending list就可以了
+     */
+    public static int carFleet2(int target, int[] position, int[] speed) {
+        int[][] cars = new int[position.length][2];
+        for(int i=0;i<position.length;i++){
+          cars[i][0]=position[i];
+          cars[i][1]=speed[i];
+        }
+        Arrays.sort(cars,(a,b)->b[0]-a[0]);
+        float prelarge = 0;
+        int count = 0;
+        for(int[] car : cars){
+          float time = (float)(target-car[0])/car[1];
+          if(time>prelarge){
+            prelarge = time;
+            count++;
+          }
+        }
+        return count;
+      }
 }
