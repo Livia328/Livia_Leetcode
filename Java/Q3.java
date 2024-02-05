@@ -1,8 +1,5 @@
-package Java;
-
 import java.util.*;
 
-import javax.print.attribute.HashAttributeSet;
 
 public class Q3 {
     public static int lengthOfLongestSubstring(String s) {

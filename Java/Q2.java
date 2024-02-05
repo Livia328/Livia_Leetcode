@@ -1,46 +1,53 @@
-package Java;
-
-import java.util.*;
-
 public class Q2 {
-    // brute force
     /**
+     * 2 - 4 - 3
+     * p1
      * 
-     * input: nums only contains integers?
-     * does it always have answers?
+     * 5 - 6 - 4
+     * p2
+     * 
+     * 7   0   8
+     * p
+     * 
+     * carry
+     * 
+     * 一定要注意move pointers
      */
-    public int[] twoSum(int[] nums, int target) {
-        int[] ans = new int[2];
-        for (int i = 0; i < nums.length; i++) {
-            for (int j = i + 1; j < nums.length; j++) {
-                if (nums[i] + nums[j] == target) {
-                    ans[0] = i;
-                    ans[1] = j;
-                    return ans;
-                }
-            }
+    public ListNode addTwoNumbers(ListNode l1, ListNode l2) {
+        ListNode p1 = l1;
+        ListNode p2 = l2;
+        ListNode dummy = new ListNode(-1);
+        ListNode p = dummy;
+        int carry = 0;
+        while (p1 != null && p2 != null) {
+            int val = p1.val + p2.val + carry;
+            carry = val / 10;
+            val = val % 10;
+            p.next = new ListNode(val);
+            p = p.next;
+            p1 = p1.next;
+            p2 = p2.next;
         }
-        return ans;
-    }
-
-    // improve
-    // [2,7,11,15]
-    // Map: 2,
-    //      0 
-    public int[] twoSum2(int[] nums, int target) {
-        // key is the number value, value is the number's index
-        Map<Integer, Integer> map = new HashMap<>();
-        int[] ans = new int[2];
-        for (int i = 0; i < nums.length; i++) {
-            // find target - nums[i]
-            if (map.containsKey(target - nums[i])) {
-                // find the ans
-                ans[0] = i;
-                ans[1] = map.get(target - nums[i]);
-                return ans;
-            } 
-            map.put(nums[i], i);
+        while (p1 != null) {
+            int val = p1.val + carry;
+            carry = val / 10;
+            val = val % 10;
+            p.next = new ListNode(val);
+            p = p.next;
+            p1 = p1.next;
         }
-        return ans;
+        while (p2 != null) {
+            int val = p2.val + carry;
+            carry = val / 10;
+            val = val % 10;
+            p.next = new ListNode(val);
+            p = p.next;
+            p2 = p2.next;
+        }
+        // 最后要check一下carry还有没有
+        if (carry != 0) {
+            p.next = new ListNode(1);
+        }
+        return dummy.next;
     }
 }
