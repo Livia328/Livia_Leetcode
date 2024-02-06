@@ -1,73 +1,216 @@
-// name: Ning Li
-// email: li.ning2@northeastern.edu
+// name: Chenyang Li
+// email: li.chenyang@northeastern.edu
 
 #include <stdio.h>   // stardard input/output library
 #include <stdbool.h> // standard boolean library: bool, true, false
+#include <stdlib.h>  // library that contains malloc, rand, and srand
+#include <time.h>    // time functions
+                     // https://www.tutorialspoint.com/c_standard_library/time_h.htm
 
-#define MAXSIZE 100
+#define MAXMAGNITUDE 100     // the biggest number to be inserted in the queue
+#define HOWMANY 10           // how many numbers to be inserted in the queue
 
-bool isEmpty (int* s, int t) {
-  // returns true if t = -1
-  return t == -1;
-}
 
-bool isFull (int* s, int t) {
-  // returns true if no more room in the stack
-  return t == MAXSIZE - 1;
-}
+/*
+ *   queue
+ *   +--------+--------+
+ *   | tail_p | head_p +----------------------------------------+
+ *   +--+-----*--------+                                        |
+ *      |                                                       |
+ *      V                                                       V
+ *   +--------+------+---------+  +--------+------+---------+  +--------+------+---------+  
+ *   | left_p | data | right_p +->| left_p | data | right_p +->| left_p | data | right_p +->NULL
+ *   |        |      |         |<-+        |      |         |<-+        |      |         |
+ *   +--+-----+------+---------+  +--------+------+---------+  +--------+------+---------+  
+ *      |       node                         node                         node
+ *      V
+ *      NULL
+ */
 
-void push(int v, int* s, int* tp) {
-  // put v onto the top of the stack s unless it is already full
-  if (!isFull(s, *tp)){
-    *tp += 1;
-    s[*tp] = v;
+
+
+//---------------------------- NODE ---------------------------- 
+
+typedef struct nd {                      // doubly linked list node
+  int data;
+  struct nd* left_p;
+  struct nd* right_p;
+} node_t;
+
+                                          // create new node with value d and NULL left & right pointers
+node_t* newNode (int d) {
+  node_t* n_p = NULL;                     // temp pointer to hold new node
+  n_p = (node_t*)malloc(sizeof(node_t));  // create new node
+  if (n_p != NULL) {
+    n_p->data = d;                        // put data in node
+    n_p->left_p = NULL;
+    n_p->right_p = NULL;
   }
-}
+  return n_p;
+};
 
-int pop (int* s, int* tp) {
-  // return the top entry in the stack unless stack is empty
-  // update s and *tp -- requires top to be passed by reference!
-  if (!isEmpty(s,*tp)){
-    int ret = s[*tp];
-    *tp -= 1;
-    return ret;
+                                         // free the node pointed to by n_p
+                                         // fragile assumption: this function does not free up nodes pointed to by left/right pointers
+void freeNode (node_t* n_p) {
+  if (n_p != NULL) {
+    free(n_p);
   }
-  return 0;
+  return;
+};
 
+
+
+//---------------------------- QUEUE  ---------------------------- 
+                                        // a queue - combining a head and a tail pointer
+typedef struct q {
+  node_t* head_p;
+  node_t* tail_p;
+} queue_t;
+
+                                        // create new empty queue (head and tail are set to NULL)
+queue_t* newQueue() {
+  queue_t* q_p;                         // temp pointer to hold newly created queue
+  q_p = (queue_t*)malloc(sizeof(queue_t));   // create new queue
+  if (q_p != NULL) {
+    q_p->head_p = NULL;
+    q_p->tail_p = NULL;
+  }
+  return q_p;
+};
+
+                                        // is the queue empty?
+bool isEmpty(queue_t* q_p) {
+  bool b = true;                        // temporary bool to hold return value - initalize to default value
+  if (q_p != NULL) {
+    b = (q_p->head_p == NULL);
+  }
+  return b;
+};
+
+                                        // function to add a new node with data d to tail of the queue
+void enqueue(queue_t* q_p, int d) {
+  node_t* n_p = newNode(d);                   // temp node pointer to new node contaning d
+  
+  if (q_p != NULL) {
+
+    if (isEmpty(q_p)) {
+      // queue is empty so insertion is easy
+
+      // ***** INSERT YOUR CODE HERE *****
+      q_p -> head_p = n_p;
+      q_p -> tail_p = n_p;
+
+      
+    } else {
+      // queue is not empty
+
+      // ***** INSERT YOUR CODE HERE *****
+      q_p -> tail_p -> right_p = n_p; //tail nodes' right point to new node
+      n_p -> left_p = q_p -> tail_p; //new'node left point to current tail
+      q_p -> tail_p = n_p; // tail now become new node
+    } 
+  }
+  
+  return;
+};
+
+                                        // function to take the node off the head of the queue and return its value
+int dequeue(queue_t* q_p) {
+  int t = -9999;                       // temp int to hold return val with arbitrary error value of -9999
+  node_t* n_p = NULL;                  // temp node poitner
+  
+  if (q_p != NULL) {
+
+    if (!isEmpty(q_p)) {
+      n_p = q_p->head_p;  // get a pointer to the head of the queue
+      t = n_p->data;      // get the value of data in the head of the queue
+
+      if (q_p->head_p  == q_p->tail_p) {      
+	// only one node in the queue, clear queue head and tail 
+
+	// ***** INSERT YOUR CODE HERE *****
+    q_p -> head_p = q_p -> tail_p = NULL;
+	
+      } else {
+	// mulitple nodes in queue, clean up head pointer and new head of queue
+
+	// ***** INSERT YOUR CODE HERE *****
+    q_p -> head_p = n_p -> right_p; // update the head pointer to next node
+    q_p -> head_p -> left_p = NULL; //set new head's left pointer to null
+
+      }
+	
+      freeNode(n_p);  // free up the node that was dequeued
+    }
+  }
+    
+  return t;
+};
+
+
+// if queue is not empty, then clean it out -- then free the queue struct
+void freeQueue(queue_t* q_p) {
+  if (q_p != NULL) {
+    // make sure the queue is empty
+    while (!isEmpty(q_p)) {
+      dequeue(q_p);
+    }
+
+    // free up the queue itself
+    free(q_p);
+  }
+  return;
+};
+
+
+// create a random integer between 1 and n
+int getRandom(int n) {
+  return ((rand() % n) + 1);
 }
+
 
 int main () {
 
-  int stack1[MAXSIZE]; // array in which stack will live
-  int top1 = -1;       // top valid location in stack, -1 == empty
-  int stack2[MAXSIZE]; // array in which stack will live
-  int top2 = -1;       // top valid location in stack, -1 == empty
+  int i;  // loop variable
+  int t;  // temporary integer
   
-  printf("pushing: 1, 2, 3, 4, 5 onto first stack\n");
-  printf("pushing: 100, 200, 300, 400, 500 onto second stack\n\n");
-  push(1, stack1, &top1);
-  push(2, stack1, &top1);
-  push(3, stack1, &top1);
-  push(4, stack1, &top1);
-  push(5, stack1, &top1);
-  push(100, stack2, &top2);
-  push(200, stack2, &top2);
-  push(300, stack2, &top2);
-  push(400, stack2, &top2);
-  push(500, stack2, &top2);
+  // create two queues
+  queue_t* q1_p = newQueue();
+  queue_t* q2_p = newQueue();
 
-  printf("popping alternating stacks:\n");
-  printf("1> %d\n",pop(stack1, &top1));
-  printf("2> %d\n",pop(stack2, &top2));
-  printf("1> %d\n",pop(stack1, &top1));
-  printf("2> %d\n",pop(stack2, &top2));
-  printf("1> %d\n",pop(stack1, &top1));
-  printf("2> %d\n",pop(stack2, &top2));
-  printf("1> %d\n",pop(stack1, &top1));
-  printf("2> %d\n",pop(stack2, &top2));
-  printf("1> %d\n",pop(stack1, &top1));
-  printf("2> %d\n",pop(stack2, &top2));
-  printf("1> %d\n",pop(stack1, &top1));
-  printf("2> %d\n",pop(stack2, &top2));
+
+  // get random number seed
+  srand((unsigned)time(NULL));
+  
+  for (i=0; i<HOWMANY; i++)  {
+    t = getRandom(MAXMAGNITUDE);
+    printf("enqueue[1] %d\n", t);
+    enqueue(q1_p, t);
+    
+
+    t = getRandom(MAXMAGNITUDE);
+    printf("enqueue[2] %d\n", t);
+    enqueue(q2_p, t);    
+  }
+
+  printf("\n");
+
+  printf("dequeue[1]: ");
+  while (!isEmpty(q1_p)) {
+    printf("%d ", dequeue(q1_p));
+  }
+
+  printf("\n");
+  
+  printf("dequeue[2]: ");
+  while (!isEmpty(q2_p)) {
+    printf("%d ", dequeue(q2_p));
+  }
+
+  printf("\n");
+
+  freeQueue(q1_p);
+  freeQueue(q2_p);
+
   return 0;
 }

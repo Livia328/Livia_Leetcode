@@ -21,9 +21,12 @@ public class Q141 {
      * 
      */
     public boolean hasCycle2(ListNode head) {
+        if (head == null) {
+            return false;
+        }
         ListNode slow = head;
         ListNode fast = head;
-        while (fast != null && fast.next.next != null) {
+        while (fast.next != null && fast.next.next != null) {
             fast = fast.next.next;
             slow = slow.next;
             if (fast == slow) {
