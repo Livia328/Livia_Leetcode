@@ -20,4 +20,21 @@ public class Q102 {
         }
         return res;
     }
+
+    public List<List<Integer>> levelOrder2(TreeNode root) {
+        List<List<Integer>> res = new ArrayList<>();
+        if (root == null) return res;
+        helper(res, root, 0);
+        return res;
+    }
+
+    public void helper(List<List<Integer>> res, TreeNode cur, int height) {
+        if (cur == null) return;
+        if (height >= res.size()) {
+            res.add(new ArrayList<>());
+        }
+        res.get(height).add(cur.val);
+        helper(res, cur.left, height + 1);
+        helper(res, cur.right, height + 1);
+    }
 }

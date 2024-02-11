@@ -1,7 +1,7 @@
 import java.util.*;
 
 public class Q1 {
-    // brute force
+  // brute force
     /**
      * 
      * input: nums only contains integers?
@@ -40,5 +40,5 @@ public class Q1 {
             map.put(nums[i], i);
         }
         return ans;
-    }
+    }  
 }
