@@ -1,113 +1,96 @@
+
+/*Han Huang
+ * huang.han3@northeastern.edu
+ * 5008 homework7
+ * Han Tables
+ */
 #include <stdio.h>
 #include <stdlib.h>
-#include <stdbool.h>
-#include <time.h>
+#include <string.h>
 
-#define LIMIT 200
-#define RAND_RANGE 95  // 95 printing characters x20-x7E
+#define TABLE_SIZE 50
 
-// return random character
-char randChar() {
-  // 0 -> x20 -> ' '
-  // 1 -> x21 -> '!'
-  // ,,,
-  // 94 -> x7E -> '~'
-  // see https://ascii.cl
-  return ((char)((rand() % RAND_RANGE)+0x20));
-}
+typedef struct {
+    char *word;
+    int frequency;
+} HashItem;
 
-// return the value of a char unless it is lower case
-// in which case return the upper case of the character
-char upperChar(char c){
-  if ((c<'a') || (c>'z')){
-    return(c);
-  } else {
-    // if you forget the displacement of lower to upper case
-    // just let the computer figure it out for you!
-    return(c-('a'-'A'));
-  }
-}
+HashItem* hashTable[TABLE_SIZE] = {NULL};
 
+unsigned int hash(const char *word) {
+    unsigned long int value = 0;
+    unsigned int i = 0;
+    unsigned int word_len = strlen(word);
 
-
-// pick pivot and then sort small and big parts 
-void quicky(char* data, int left, int right) {
-
-  if (left < right) {
-
-      char pivot = data[right]; 
-      int i = left - 1; 
-
-      // Partition the array
-      for (int j = left; j < right; j++) {
-          if (data[j] < pivot) {
-              i++;
-              // Swap
-              char temp = data[i];
-              data[i] = data[j];
-              data[j] = temp;
-          }
-      }
-
-      char temp = data[i + 1];
-      data[i + 1] = data[right];
-      data[right] = temp;
-
-      int partitionIndex = i + 1;
-
-      // Recursively sort the elements 
-      quicky(data, left, partitionIndex - 1);
-      quicky(data, partitionIndex + 1, right);
-  }
-
-  return;
-}
-
-
-
-int main(){
-
-  char source[LIMIT]; // array to hold input data values
-
-  int i;             // loop variable
-  int j;             // loop variable
-
-
-  //seed random numbers
-  srand((unsigned)time(NULL));
-
-  //initialize source array with random character
-  for (i=0; i<LIMIT; i++) {
-    source[i] = randChar();
-  }
-
-  //print out source array in rows of 20 elments
-  printf("Source array:\n");
-  for (i=0; i < ((LIMIT/20)+1); i++) {
-    for (j=0; j<20; j++) {
-      if (i*20+j < LIMIT) {
-	printf("%c ",source[i*20+j]);
-      }
+    for(; i < word_len; ++i) {
+        value = value * 37 + word[i];
     }
-    printf("\n");
-  }
-  printf("\n");
 
-  // do the sorting
-  quicky(source, 0, LIMIT-1);
-
-  
-  //print out sorted array in rows of 10
-  printf("Destination array:\n");
-  for (i=0; i < ((LIMIT/10)+1); i++) {
-    for (j=0; j<10; j++) {
-      if (i*10+j < LIMIT) {
-	printf("%c ",source[i*10+j]);
-      }
-    }
-    printf("\n");
-  }
-  printf("\n");
-  
-  return 0;
+    value = value % TABLE_SIZE;
+    return value;
 }
+
+void insert(const char *word) {
+    unsigned int index = hash(word);
+
+    while (hashTable[index] != NULL && strncmp(hashTable[index]->word, word, TABLE_SIZE) != 0) {
+        index = (index + 1) % TABLE_SIZE;
+    }
+
+    if (hashTable[index] != NULL) {
+        hashTable[index]->frequency += 1;
+    } else {
+        HashItem *item = (HashItem*)malloc(sizeof(HashItem));
+        item->word = (char*)malloc(strlen(word) + 1);
+        strcpy(item->word, word);
+        item->frequency = 1;
+        hashTable[index] = item;
+    }
+}
+
+int cmp(const void *a, const void *b) {
+    HashItem *item1 = *(HashItem**)a;
+    HashItem *item2 = *(HashItem**)b;
+    return item2->frequency - item1->frequency; // Descending order
+}
+
+void printFrequencies() {
+    printf("Word Frequencies:\n");
+
+    HashItem *sortedItems[TABLE_SIZE];
+    int sortedIndex = 0;
+
+    for (int i = 0; i < TABLE_SIZE; ++i) {
+        if (hashTable[i] != NULL) {
+            sortedItems[sortedIndex++] = hashTable[i];
+        }
+    }
+
+    qsort(sortedItems, sortedIndex, sizeof(HashItem*), cmp);
+
+    for (int i = 0; i < sortedIndex; ++i) {
+        printf("%s: %d\n", sortedItems[i]->word, sortedItems[i]->frequency);
+    }
+}
+
+int main() {
+    char *words[] = {"apple", "banana", "apple", "orange", "banana", "apple"};
+    int wordsCount = 6;
+
+    for (int i = 0; i < wordsCount; ++i) {
+        insert(words[i]);
+    }
+
+    printFrequencies();
+
+    for (int i = 0; i < TABLE_SIZE; ++i) {
+        if (hashTable[i] != NULL) {
+            free(hashTable[i]->word);
+            free(hashTable[i]);
+        }
+    }
+
+    return 0;
+}
+
+
