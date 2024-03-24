@@ -18,6 +18,8 @@ public class Q79 {
 
     public void backtrack(char[][] board, String word, boolean[][] visited, int index, int i, int j) {
         // add the answer
+        // 这个return条件一定要写在第一个！
+        // 不然可能word只有一个单词，如果把out of boundary放前边，还没有把found标记成true就直接返回了
         if (index == word.length()) {
             found = true;
             return;
