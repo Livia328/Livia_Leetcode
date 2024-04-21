@@ -1,5 +1,3 @@
-package Java;
-
 class Q268 {
     public static int missingNumber(int[] nums) {
         int n = nums.length;

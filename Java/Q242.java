@@ -1,5 +1,3 @@
-package Java;
-
 public class Q242 {
     /**
      * Anagram means s and t have exactly same number of each letters appear

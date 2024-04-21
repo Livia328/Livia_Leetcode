@@ -1,216 +1,167 @@
-// name: Chenyang Li
-// email: li.chenyang@northeastern.edu
 
-#include <stdio.h>   // stardard input/output library
-#include <stdbool.h> // standard boolean library: bool, true, false
-#include <stdlib.h>  // library that contains malloc, rand, and srand
-#include <time.h>    // time functions
-                     // https://www.tutorialspoint.com/c_standard_library/time_h.htm
-
-#define MAXMAGNITUDE 100     // the biggest number to be inserted in the queue
-#define HOWMANY 10           // how many numbers to be inserted in the queue
-
-
-/*
- *   queue
- *   +--------+--------+
- *   | tail_p | head_p +----------------------------------------+
- *   +--+-----*--------+                                        |
- *      |                                                       |
- *      V                                                       V
- *   +--------+------+---------+  +--------+------+---------+  +--------+------+---------+  
- *   | left_p | data | right_p +->| left_p | data | right_p +->| left_p | data | right_p +->NULL
- *   |        |      |         |<-+        |      |         |<-+        |      |         |
- *   +--+-----+------+---------+  +--------+------+---------+  +--------+------+---------+  
- *      |       node                         node                         node
- *      V
- *      NULL
- */
-
-
-
-//---------------------------- NODE ---------------------------- 
-
-typedef struct nd {                      // doubly linked list node
-  int data;
-  struct nd* left_p;
-  struct nd* right_p;
-} node_t;
-
-                                          // create new node with value d and NULL left & right pointers
-node_t* newNode (int d) {
-  node_t* n_p = NULL;                     // temp pointer to hold new node
-  n_p = (node_t*)malloc(sizeof(node_t));  // create new node
-  if (n_p != NULL) {
-    n_p->data = d;                        // put data in node
-    n_p->left_p = NULL;
-    n_p->right_p = NULL;
-  }
-  return n_p;
-};
-
-                                         // free the node pointed to by n_p
-                                         // fragile assumption: this function does not free up nodes pointed to by left/right pointers
-void freeNode (node_t* n_p) {
-  if (n_p != NULL) {
-    free(n_p);
-  }
-  return;
-};
-
-
-
-//---------------------------- QUEUE  ---------------------------- 
-                                        // a queue - combining a head and a tail pointer
-typedef struct q {
-  node_t* head_p;
-  node_t* tail_p;
-} queue_t;
-
-                                        // create new empty queue (head and tail are set to NULL)
-queue_t* newQueue() {
-  queue_t* q_p;                         // temp pointer to hold newly created queue
-  q_p = (queue_t*)malloc(sizeof(queue_t));   // create new queue
-  if (q_p != NULL) {
-    q_p->head_p = NULL;
-    q_p->tail_p = NULL;
-  }
-  return q_p;
-};
-
-                                        // is the queue empty?
-bool isEmpty(queue_t* q_p) {
-  bool b = true;                        // temporary bool to hold return value - initalize to default value
-  if (q_p != NULL) {
-    b = (q_p->head_p == NULL);
-  }
-  return b;
-};
-
-                                        // function to add a new node with data d to tail of the queue
-void enqueue(queue_t* q_p, int d) {
-  node_t* n_p = newNode(d);                   // temp node pointer to new node contaning d
-  
-  if (q_p != NULL) {
-
-    if (isEmpty(q_p)) {
-      // queue is empty so insertion is easy
-
-      // ***** INSERT YOUR CODE HERE *****
-      q_p -> head_p = n_p;
-      q_p -> tail_p = n_p;
-
-      
-    } else {
-      // queue is not empty
-
-      // ***** INSERT YOUR CODE HERE *****
-      q_p -> tail_p -> right_p = n_p; //tail nodes' right point to new node
-      n_p -> left_p = q_p -> tail_p; //new'node left point to current tail
-      q_p -> tail_p = n_p; // tail now become new node
-    } 
-  }
-  
-  return;
-};
-
-                                        // function to take the node off the head of the queue and return its value
-int dequeue(queue_t* q_p) {
-  int t = -9999;                       // temp int to hold return val with arbitrary error value of -9999
-  node_t* n_p = NULL;                  // temp node poitner
-  
-  if (q_p != NULL) {
-
-    if (!isEmpty(q_p)) {
-      n_p = q_p->head_p;  // get a pointer to the head of the queue
-      t = n_p->data;      // get the value of data in the head of the queue
-
-      if (q_p->head_p  == q_p->tail_p) {      
-	// only one node in the queue, clear queue head and tail 
-
-	// ***** INSERT YOUR CODE HERE *****
-    q_p -> head_p = q_p -> tail_p = NULL;
-	
-      } else {
-	// mulitple nodes in queue, clean up head pointer and new head of queue
-
-	// ***** INSERT YOUR CODE HERE *****
-    q_p -> head_p = n_p -> right_p; // update the head pointer to next node
-    q_p -> head_p -> left_p = NULL; //set new head's left pointer to null
-
-      }
-	
-      freeNode(n_p);  // free up the node that was dequeued
-    }
-  }
+// Compile : gcc -Wall adjacencymatrix.c -o adjacencymatrix 
+//           ^ Note: You may get a few warnings for passing pointers around, 
+//             this is okay for this lab.
+// Run with: ./adjacencymatrix
     
-  return t;
-};
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+
+// These defines do a text replacement
+// everytime the string 'ROWS' and 'COLUMNS'
+// are found in this specific source file.
+// You can play with these values.
+
+#define ROWS 5
+#define COLUMNS 5
+
+/*  ============= Tutorial on Graph format ============
+    You are given a randomly generated graph that looks 
+    of the form:
+
+    0 0 1 1 1
+    1 0 0 1 1
+    0 1 0 1 1
+    1 0 0 0 0
+    1 0 1 1 0
+
+    You can think of the graph with labels for each of
+    the nodes (usually called vertices or nodes) 
+    more clearly below:
+
+               0 1 2 3 4
+               ---------  
+    node 0:    0 0 1 1 1
+    node 1:    1 0 0 1 1
+    node 2:    0 1 0 1 1
+    node 3:    1 0 0 0 0
+    node 4:    1 0 1 1 0
+
+    A '1' represents a connection to a node, and a 0
+    means it is not connected.
+
+               0 1 2 3 4
+               ---------  
+    node 0:    0 0 1 1 1
+    node 1:    1 0 0 1 1
+    node 2:    0 1 0 1 1
+    node 3:    1 0 0 0 0
+    node 4:    1 0 1 1 0
+
+    In the above, '0' is connected to 2, 3, and 4.
+    That means node 0 has directed-edges out 
+    to nodes  2,3,and 4. In other words, 
+    the edge-list for node 0 is:
+    0->2, 0->3, 0->4
+    
+    The number of connections a node has out is its 'out-degree'
+    The number of connections a node has in are it's 'in-degree'
+*/
 
 
-// if queue is not empty, then clean it out -- then free the queue struct
-void freeQueue(queue_t* q_p) {
-  if (q_p != NULL) {
-    // make sure the queue is empty
-    while (!isEmpty(q_p)) {
-      dequeue(q_p);
+
+// This function generates a random graph
+// Note: For the purpose of this lab,
+//       we do not seed the random number generator
+//       so we can generate the same graph over
+//       and over again.
+
+void generateGraph(int* g){
+    // Uncomment the line below if you want
+    // to generate a random graph each time.
+    // srand(time(NULL));  
+    int i,j;
+    for(i=0; i < ROWS; i++){
+        for(j=0; j < COLUMNS; j++){
+            if(i==j){
+                g[i*COLUMNS+j] = 0; // Why do we have this condition? a node don't connect to itself
+            }else{
+                g[i*COLUMNS+j] = rand() % 2;
+            }
+        }
     }
-
-    // free up the queue itself
-    free(q_p);
-  }
-  return;
-};
-
-
-// create a random integer between 1 and n
-int getRandom(int n) {
-  return ((rand() % n) + 1);
 }
 
 
-int main () {
+// This function will print out the adjacency
+// matrix for a graph.
+void printGraph(int* g){ 
+    int i, j;
+    for(i = 0; i < ROWS; i++){
+        for(j = 0; j < COLUMNS; j++){
+            printf("%d ",g[i * COLUMNS + j]);
+        }
+        printf("\n");
+    }
+}
 
-  int i;  // loop variable
-  int t;  // temporary integer
-  
-  // create two queues
-  queue_t* q1_p = newQueue();
-  queue_t* q2_p = newQueue();
+// // Compute 'in-degree' of a node
+// // For a given node 'n' in an adjacency matrix,
+// // compute the in-degree.
+// int nodeInDegree(int* g, int node){
+//     int in_degree = 0;
+//     for (int j = 0; j < COLUMNS; j++){
+//         in_degree += g[node,j];
+//     return in_degree;
+//     }
+// }
+
+// Compute 'in-degree' of a node
+// For a given node 'n' in an adjacency matrix,
+// compute the in-degree.
+int nodeInDegree(int* g, int node){
+    int in_degree = 0;
+    for (int j = 0; j < COLUMNS; j++){
+        in_degree += g[j * COLUMNS + node];
+    }
+    return in_degree;
+
+}
+// Compute 'out-degree' of a node
+// For a given node 'n' in an adjacency matrix,
+// compute the out-degree.
+int nodeOutDegree(int* g, int node){
+    int out_degree = 0;
+    for (int j = 0; j < COLUMNS; j++){
+        out_degree += g[node * COLUMNS + j];
+    }
+    return out_degree;
+}
 
 
-  // get random number seed
-  srand((unsigned)time(NULL));
-  
-  for (i=0; i<HOWMANY; i++)  {
-    t = getRandom(MAXMAGNITUDE);
-    printf("enqueue[1] %d\n", t);
-    enqueue(q1_p, t);
-    
+// Figure out if two nodes are connected
+// Returns a 1 if node1 is connected to node 2
+int isConnected(int* g, int node1, int node2){
+    return g[node1 * COLUMNS + node2];
+}
 
-    t = getRandom(MAXMAGNITUDE);
-    printf("enqueue[2] %d\n", t);
-    enqueue(q2_p, t);    
-  }
+int main(){
+ 
+    // int g_testgraph[ROWS][COLUMNS];
+    int* g_testgraph = malloc((ROWS*COLUMNS)*sizeof(int));
+    // Generate a random graph
+    generateGraph(g_testgraph);
+    // Print out the graph
+    printGraph(g_testgraph);
+    // Print out the nodeInDegree of each of the
+    // five nodes
+    int i=0;
+    for(i =0; i < COLUMNS; ++i){
+        printf("node %d in-degree= %d\n",i,nodeInDegree(g_testgraph,i));
+    }
+    // Print out the nodeOutDegree of each of the
+    // five nodes
+    i=0;
+    for(i =0; i < COLUMNS; ++i){
+        printf("node %d out-degree= %d\n",i,nodeOutDegree(g_testgraph,i));
+    }
+    // Check which nodes '0' is connected to
+    printf("Node 0 connections:");
+    int j;
+    for(j =0; j < COLUMNS; ++j){
+        printf("%d ",isConnected(g_testgraph,0,j));
+    }
 
-  printf("\n");
-
-  printf("dequeue[1]: ");
-  while (!isEmpty(q1_p)) {
-    printf("%d ", dequeue(q1_p));
-  }
-
-  printf("\n");
-  
-  printf("dequeue[2]: ");
-  while (!isEmpty(q2_p)) {
-    printf("%d ", dequeue(q2_p));
-  }
-
-  printf("\n");
-
-  freeQueue(q1_p);
-  freeQueue(q2_p);
-
-  return 0;
+    return 0;
 }

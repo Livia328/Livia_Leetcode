@@ -11,6 +11,8 @@ def floyd(G):
         for p in range(nV):
             for q in range(nV):
                 dist[p][q] = min(dist[p][q], dist[p][r] + dist[r][q])
+        sol(dist)
+        print("###########################")
     sol(dist)
 
 # Printing the output
