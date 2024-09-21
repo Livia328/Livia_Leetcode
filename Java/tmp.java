@@ -1,52 +1,39 @@
 import java.util.*;
 
 public class tmp {
-    /**
-     * prerequisites: [a, b] b -> a
+    /*
+     * [1,4,5],
+     *    p1
      * 
-     * indegree:
+     * [1,3,4],
+     * p2
      * 
+     * [2,6]
+     * p3
+     * 
+     * PriorityQueue<ListNode>  1, 2, 4
+     * 
+     * dummy -> 1 -> 1 -> 2 -> 3 -> 4 -> 4
+     * p
      */
-    public int[] findOrder(int numCourses, int[][] prerequisites) {
-        int[] indegree = new int[numCourses];
-        Map<Integer, List<Integer>> adj = new HashMap<>();
-        for(int i = 0; i < numCourses; i++) {
-            adj.put(i, new ArrayList<>());
-        }
-        for (int[] r : prerequisites) {
-            int curCourse = r[0];
-            int preCourse = r[1];
-            indegree[curCourse]++;
-            adj.get(preCourse).add(curCourse);
-        }
-        // start bfs
-        List<Integer> res = new LinkedList<>();
-        Queue<Integer> queue = new ArrayDeque<>();
-        for (int i = 0; i < numCourses; i++) {
-            if (indegree[i] == 0) {
-                queue.offer(i);
+    public ListNode mergeKLists(ListNode[] lists) {
+        ListNode dummy = new ListNode(-1);
+        ListNode p = dummy;
+        PriorityQueue<ListNode> pq = new PriorityQueue<>((a, b) -> a.val - b.val);
+        // add node into queue
+        for (ListNode cur : lists) {
+            if (cur != null) {
+                pq.add(cur);
             }
         }
-        while (!queue.isEmpty()) {
-            int n = queue.size();
-            for (int i = 0; i < n; i++) {
-                int cur = queue.poll();
-                res.add(cur);
-                for (int nei : adj.get(cur)) {
-                    indegree[nei]--;
-                    if (indegree[nei] == 0) {
-                        queue.add(nei);
-                    }
-                }
+        while (!pq.isEmpty()) {
+            ListNode cur = pq.poll();
+            p.next = new ListNode(cur.val);
+            if (cur.next != null) {
+                pq.add(cur.next);
             }
+            p = p.next;
         }
-        if (res.size() != numCourses) {
-            return new int[0];
-        }
-        int[] ans = new int[numCourses];
-        for (int i = 0; i < numCourses; i++) {
-            ans[i] = res.get(i);
-        }
-        return ans;
+        return dummy.next;
     }
 }
