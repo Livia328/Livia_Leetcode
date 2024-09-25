@@ -1,39 +1,45 @@
+import java.rmi.Remote;
 import java.util.*;
 
 public class tmp {
-    /*
-     * [1,4,5],
-     *    p1
-     * 
-     * [1,3,4],
-     * p2
-     * 
-     * [2,6]
-     * p3
-     * 
-     * PriorityQueue<ListNode>  1, 2, 4
-     * 
-     * dummy -> 1 -> 1 -> 2 -> 3 -> 4 -> 4
-     * p
-     */
-    public ListNode mergeKLists(ListNode[] lists) {
-        ListNode dummy = new ListNode(-1);
-        ListNode p = dummy;
-        PriorityQueue<ListNode> pq = new PriorityQueue<>((a, b) -> a.val - b.val);
-        // add node into queue
-        for (ListNode cur : lists) {
-            if (cur != null) {
-                pq.add(cur);
+    public int ladderLength(String beginWord, String endWord, List<String> wordList) {
+        Set<String> words = new HashSet<>(wordList);
+        // base case
+        if (words == null || words.size() == 0) {
+            return 0;
+        }
+        if (!words.contains(endWord)) {
+            return 0;
+        }
+        // start bfs
+        Queue<String> queue = new ArrayDeque<>();
+        Set<String> visited = new HashSet<>();
+        queue.add(beginWord);
+        visited.add(beginWord);
+        int step = 0;
+        while (!queue.isEmpty()) {
+            step++;
+            int n = queue.size();
+            for (int i = 0; i < n; i++) {
+                String cur = queue.poll();
+                if (cur.equals(endWord)) {
+                    return step;
+                }
+                // 尝试修改每一位，每一位可以修改成26个字母中任何一个
+                for (int index = 0; index < cur.length(); index++) {
+                    char[] curWord = cur.toCharArray();
+                    // 每一位都可以被改成26个字母
+                    for (char c = 'a'; c <= 'z'; c++) {
+                        curWord[index] = c;
+                        String newWord = String.valueOf(curWord);
+                        if (!newWord.equals(cur) && !visited.contains(newWord) && words.contains(newWord)) {
+                            queue.add(newWord);
+                            visited.add(newWord);
+                        }
+                    }
+                }
             }
         }
-        while (!pq.isEmpty()) {
-            ListNode cur = pq.poll();
-            p.next = new ListNode(cur.val);
-            if (cur.next != null) {
-                pq.add(cur.next);
-            }
-            p = p.next;
-        }
-        return dummy.next;
+        return 0;
     }
 }

@@ -2,7 +2,12 @@ import java.util.*;
 
 public class Q127 {
     /*
+     * 有点像graph，beginWord是起点，endWord是终点
+     * 26个字母是所有可能的path
+     * 就是对于每一位，如果改了一个字母后，这个字母在wordList中的话，那么这条路就是可以走的
+     * 
      * 因为是最短路径，所以BFS
+     * 在放入Queue的同时标记visted
      * 
      */
     public int ladderLength(String beginWord, String endWord, List<String> wordList) {

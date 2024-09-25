@@ -30,7 +30,7 @@ public class Q76 {
                     end = R;
                 }
                 char d = s.charAt(L);
-                L++
+                L++;
                 if (need.containsKey(d)) {
                     if (need.get(d).equals(window.get(d))) {
                         match--;
