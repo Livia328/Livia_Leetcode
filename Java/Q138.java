@@ -15,6 +15,9 @@ public class Q138 {
 
     /**
      * hashtable + 两次遍历
+     * 因为是deep copy，所以需要hashmap将原来的node和新对应上
+     * Map<Node, Node> key: original, val: new
+     * 
      * 第一次遍历将所有点都copy出来
      * 第二次将random的给连接上
      */
@@ -22,16 +25,17 @@ public class Q138 {
         Map<Node, Node> map = new HashMap<>();
         Node p = head;
         while (p != null) {
-            Node copy = new Node(p.val);
-            map.putIfAbsent(p, copy);
+            map.put(p, new Node(p.val));
             p = p.next;
         }
         p = head;
         while (p != null) {
-            Node next = p.next;
-            map.get(p).next = map.get(next);
-            Node rand = p.random;
-            map.get(p).random = map.get(rand);
+            Node copy = map.get(p);
+            Node copyNext = map.get(p.next);
+            copy.next = copyNext;
+            Node copyRam = map.get(p.random);
+            copy.random = copyRam;
+            map.put(p, copy);
             p = p.next;
         }
         return map.get(head);
