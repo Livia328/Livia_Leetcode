@@ -1,25 +1,35 @@
 import java.rmi.Remote;
 import java.util.*;
+import java.util.ArrayList;
 
 public class tmp {
-    public static String[] createFrame(int n) {
-        // Create an array of strings to hold the frame
-        String[] frame = new String[n];
-        
-        // Fill the frame
-        for (int i = 0; i < n; i++) {
-            StringBuilder row = new StringBuilder();
-            for (int j = 0; j < n; j++) {
-                // Check if we are on the border
-                if (i == 0 || i == n - 1 || j == 0 || j == n - 1) {
-                    row.append('*');  // Add a star at the border
-                } else {
-                    row.append(' ');  // Add a space inside the frame
-                }
-            }
-            frame[i] = row.toString(); // Convert StringBuilder to String and store it in the array
+    /*
+     * backtracking(start)
+     * 
+     * candidats: [start, n]
+     * when to add ans: path.size == k
+     * 
+     *                   []
+     *     [1]          [2]   [3]
+     *  [1,2] [1,3]    [2, 3]
+     */
+    List<List<Integer>> res = new ArrayList<>();
+    List<Integer> path = new ArrayList<>();
+    public List<List<Integer>> combine(int n, int k) {
+        backtracking(1, n, k);
+        return res;
+    }
+
+    public void backtracking(int start, int n, int k) {
+        // base case
+        if (path.size() == k) {
+            res.add(new ArrayList<>(path));
+            return;
         }
-        
-        return frame;
+        for (int i = start; i <= n; i++) {
+            path.add(i);
+            backtracking(i + 1, n, k);
+            path.remove(path.size() - 1);
+        }
     }
 }
