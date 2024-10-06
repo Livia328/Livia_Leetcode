@@ -9,11 +9,13 @@ public class Q286 {
      * Fill each empty room with the distance to its nearest gate. If it is impossible to reach a gate, it should be filled with INF.
      */
 
-     /**
-      * 从门开始，用BFS
-      * 第一层遍历到的就是1
-      */
-
+     /*
+     * 从每一个门开始BFS，找到最近的
+     * 把所有的门坐标放入queue中，他们等于说是第0起点
+     * 然后开始bfs
+     * 
+     * 碰到bfs的时候，就把当前门的坐标放进去
+     */
     public void wallsAndGates(int[][] rooms) {
         int m = rooms.length;
         int n = rooms[0].length;

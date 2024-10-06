@@ -8,7 +8,7 @@ public class Q2402 {
      * 
      * 两个priorityQueue
      * PQ:meetingRoom
-     * PQ:meetingInProgress
+     * PQ:meetingInProgress: store both meeting room number, and end time
      * 
      * 每次遍历meeting cur[start, end]:
      * 1. 检查meetingInProgress，如果peek().endTime <= cur.start
