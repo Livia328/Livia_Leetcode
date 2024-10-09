@@ -3,7 +3,6 @@ import java.util.Stack;
 public class Q71 {
     /*
     因为涉及到上一层目录，所以stack
-    自己根本没想到，吗的
     */
     public String simplifyPath(String path) {
         Stack<String> stack = new Stack<>();

@@ -5,6 +5,8 @@ import javax.sound.midi.Track;
 public class Q22 {
     /**
      * backtracking
+     * 对于每一个位置，可以选择append("(")，选择append(")")
+     * 
      * used right, used left
      * 
      * left < right, return 
