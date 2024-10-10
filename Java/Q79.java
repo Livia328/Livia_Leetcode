@@ -1,4 +1,17 @@
 public class Q79 {
+    /*
+     * backtracking
+     * 如果board[i][j] == word.charAt(0)的话,就开始backtrack
+     * 
+     * backtrack里：
+     * 加入答案的条件：index == word.length
+     * 
+     * 如果越界，或者遍历过，或者board[i][j] != word.charAt(index)，返回
+     * 
+     * 我们也可以有一个global变量found，如果已经found了，就不要浪费时间了
+     * 
+     * candidate：上下左右
+     */
     int[][] DIR = {{1,0}, {-1,0}, {0, 1}, {0, -1}};
     boolean found = false;
     public boolean exist(char[][] board, String word) {
