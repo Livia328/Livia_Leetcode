@@ -3,7 +3,12 @@ import java.util.Set;
 
 public class Q3043 {
     /*
-     * 枚举所有前缀
+     * 枚举arr1的所有前缀
+     * [1,10,100]
+     * 
+     * set：1, 10, 1, 100, 10, 1
+     * 然后对arr2中的每个数字枚举前缀，看是不是在arr1中
+     * 
      * 在set中放入数字，最后Integer.toString(res).length()得到长度
      */
     public int longestCommonPrefix(int[] arr1, int[] arr2) {
