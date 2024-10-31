@@ -1,9 +1,16 @@
 public class Q33 {
     /**
-     * key point of binary search is like, 
-     * how to divide the array into 2 part, 
-     * and in which part target is
+     * 重点是找到一个办法让它分成两半
+     * 每次分两半，肯定有一半是sort好的，有一半是没sort好的
      * 
+     * 如果nums[L] <= nums[M]，说明左半段是sort好的
+     *   如果nums[L] <= target <= nums[M]
+     *   那么说明target在左半段
+     *   否则说明在有半段
+     * 
+     * 否则说明右半段是sort好的
+     *   如果nums[M] <= target <= nums[R]
+     *   那么说明target在右半段
      * 
      * one part is sorted, one part is not sorted
      * 4,5,6,7,0,1,2    target 0

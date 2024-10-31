@@ -88,20 +88,24 @@ public class Q207 {
             // 0: [1, ]
             adjacent.get(from).add(to);
         }
+        //用来存储当前path上的，需要backtra
         path = new boolean[numCourses];
+        //用来存储是否遍历过
         visited = new boolean[numCourses];
         for (int i = 0; i < numCourses; i++) {
             dfs(adjacent, i);
         }
+        //如果最后没有环，说明可以上完
         return !hasCycle;
     }
 
     public void dfs(Map<Integer, List<Integer>> adjacent, int cur) {
-        // base case
+        //如果这个点已经出现在这个路径中，那么说明有环
         if (path[cur]) {
             hasCycle = true;
             return;
         }
+        //如果已经找到了环或者这个点遍历过，那么直接return；
         if (visited[cur] || hasCycle) {
             return;
         }

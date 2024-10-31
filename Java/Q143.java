@@ -1,12 +1,19 @@
 public class Q143 {
     /**
-     * divide the linked list into 2 part
-     * reverse the second part
-     * connect
+     * 把linkedlist从中间分成两部分
+     * 用快慢指针
      * 
      * 1 -> 2 -> 3 -> 4
      *      s
      *           f
+     * 
+     * 第一段 1 -> 2
+     * 第二段 3 -> 4
+     * 
+     * 然后把第二段reverse一下
+     * 4 -> 3
+     * 
+     * 然后把第一段和第二段交叉连接在一起
      */
     public void reorderList(ListNode head) {
        // divide into 2 part
@@ -21,6 +28,7 @@ public class Q143 {
        // list1: 1  2
        //        p1 tmp
        // list2:   4->3
+       //          p2
        ListNode list2 = reverseLinkedList(null, head2);
        ListNode p1 = head; ListNode p2 = list2;
        while (p2 != null) {

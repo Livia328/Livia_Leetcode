@@ -5,6 +5,17 @@ public class Q1570 {
      * 因为是spars vector
      * 所以我们将不为0的数存在hashmap里即可
      * map: key是index, val是值
+     *          0 1 2 3 4
+     * nums1 = [1,0,0,2,3], nums2 = [0,3,0,4,0]
+     * map1:
+     * 0, 1
+     * 3, 2
+     * 4, 3
+     * 
+     * map2:
+     * 1, 3
+     * 3, 4
+     * 
      */
     class SparseVector1 {
 
@@ -42,6 +53,12 @@ public class Q1570 {
 
     /*
      * 双指针
+     *  [0, 0, 1, 2, 3]
+        p1
+        
+        [0, 1, 0, 2, 4]
+        p2
+     * 如果碰到了0就skip
      */
     class SparseVector {
 

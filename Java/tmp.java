@@ -1,41 +1,66 @@
 import java.util.*;
-import java.util.HashMap;
-import java.util.Map;
 
 public class tmp {
-    /*
-     * 因为涉及到上一级的目录，所以stack
-     * 将path根据’/‘split
-     * 
-     * 如果是正常的目录，就会被放进stack里
-     * 如果是’..‘，如果stack里有东西，就把东西从stack里pop出来
-     * 
-     * 如果是空的，或者是’。‘，那么就continue
-     * 空的，'///'这样按照'/'split就会是空的
-     * '.'说明是当前的目录，也不用加
-     * 
-     * 最后再把它们组装起来
-     */
-    public String simplifyPath(String path) {
-        Stack<String> stack = new Stack<>();
-        String[] parts = path.split("/");
-        for (String part : parts) {
-            if (part.isEmpty() || part.equals(".")) {
-                continue;
-            }
-            if (part.equals("..")) {
-                if (!stack.isEmpty()) {
-                    stack.pop();
+    public int minStickers(String[] stickers, String target) {
+        // sort target and each stickers
+        target = sortString(target);
+        for (int i = 0; i < stickers.length; i++) {
+            stickers[i] = sortString(stickers[i]);
+        }
+        // start bfs
+        Queue<String> queue = new ArrayDeque<>();
+        int steps = 0;
+        Set<String> set = new HashSet<>();
+        queue.add(target);
+        set.add(target);
+        while (!queue.isEmpty()) {
+            steps++;
+            int n = queue.size();
+            for (int i = 0; i < n; i++) {
+                String cur = queue.poll();
+                for (String sticker : stickers) {
+                    String remain = filter(sticker, cur);
+                    // 如果返回的remain是空的说明匹配上了
+                    if (remain.isEmpty()) {
+                        return steps;
+                    }
+                    // 如果有被匹配过，或者这个状态没有出现过，那么加入queue
+                    if (!remain.equals(cur) && !set.contains(remain)) {
+                        set.add(remain);
+                        queue.add(remain);
+                    }
                 }
-                continue;
             }
-            stack.push(part);
         }
-        // 这里得用res，因为是把string append到res前面
-        String res = new String();
-        while (!stack.isEmpty()) {
-            res = "/" + stack.pop() + res;
+        return -1;
+    }
+
+    /*
+     * sort each character of s
+     */
+    public String sortString(String s) {
+        char[] arr = s.toCharArray();
+        Arrays.sort(arr);
+        return new String(arr);
+    }
+
+     /**
+     * 将sticker里有的字母都贴上，返回这个贴纸里找不到的
+     */
+    public String filter(String sticker, String target) {
+        int[] stickerFreq = new int[26];
+        for (char c : sticker.toCharArray()) {
+            stickerFreq[c - 'a']++;
         }
-        return res.isEmpty() ? "/" : res;
+        StringBuilder sb = new StringBuilder();
+        int[] targetFreq = new int[26];
+        for (char c : target.toCharArray()) {
+            if (stickerFreq[c - 'a'] > targetFreq[c - 'a']) {
+                targetFreq[c - 'a']++;
+            } else {
+                sb.append(c);
+            }
+        }
+        return sb.toString();
     }
 }

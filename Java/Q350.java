@@ -8,14 +8,18 @@ public class Q350 {
      * 1: 2
      * 2: 3
      * 
+     * 先分别记录两个map
      * 检查map1里的每一个和map2的交集
+     * 如果一个元素在map1和2里同时存在，那么取他们出现freq的最小值
+     * 往list里insert freq个这个数
      * 
      */
     public int[] intersect(int[] nums1, int[] nums2) {
         Map<Integer, Integer> map1 = new HashMap<>();
         for (int i : nums1) {
             map1.put(i, map1.getOrDefault(i, 0) + 1);
-        }Map<Integer, Integer> map2 = new HashMap<>();
+        }
+        Map<Integer, Integer> map2 = new HashMap<>();
         for (int i : nums2) {
             map2.put(i, map2.getOrDefault(i, 0) + 1);
         }

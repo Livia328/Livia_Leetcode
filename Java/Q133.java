@@ -2,6 +2,8 @@ import java.util.*;
 
 public class Q133 {
     /**
+     * 用一个map来存，key是旧的节点，val是新的节点
+     * 
      * 这道题就是要注意把新的放进新的
      * map.get(cur).neighbors.add(map.get(nei));
      */

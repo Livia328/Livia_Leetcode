@@ -1,6 +1,7 @@
 public class Q348 {
     /*
      * 就是直接模拟
+     * 移动之后check行，check列，check对角线
      */
     class TicTacToe {
         int[][] board;

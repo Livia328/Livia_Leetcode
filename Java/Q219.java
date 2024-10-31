@@ -39,9 +39,13 @@ public class Q219 {
     }
 
     /**
+     * 
+     * 用map来记录这个数的最新index
      * hashmap
      * key: number
      * value: most recent index
+     * 
+     * 如果这个数出现过，看和上一个数的index的差是不是小于k
      */
     public boolean containsNearbyDuplicate(int[] nums, int k) {
         Map<Integer, Integer> map = new HashMap<>();

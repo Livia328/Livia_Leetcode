@@ -1,4 +1,14 @@
 public class Q415 {
+    /*
+     * immitate the process
+     *     i
+     *   1 1
+     *     j
+     * 1 2 3
+     * 
+     * 用carry来记录进位
+     * 如果到头了就记录0
+     */
     public String addStrings(String num1, String num2) {
         StringBuilder sb = new StringBuilder();
         int i = num1.length() - 1, j = num2.length() - 1;

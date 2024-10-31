@@ -1,22 +1,14 @@
 public class Q153 {
     /*
-     * [3,4,5,1,2]
-     *        L R  
-     *        M
-     * 3
+     * 这个题的重点是数组分两半
+     * 一半是有序的
      * 
-     * 注意，因为以上情况，同样需要更新L，
+     * 可以靠判断nums[L]和nums[M]判断这个时候哪边是sorted
+     * 最小值一定在unsorted的part
      * 
-     * binary search -> sorted
-     * key point: how to divide the array into 2 parts
-     * 
-     * always one part sorted, one part not sorted
-     * 
-     * we are going to find the min value, so it must appear in the unsorted part
-     * 
-     * nums[left] < nums[mid], left is sorted
-     *  -> update min
-     *  -> shrink the left bound, because we are going to find the unsorted part
+     * nums[left] < nums[mid], 左边sorted
+     *    candidate是nums[left]，所以更新一下res
+     *    同时我们要去找unsorted的部分，所以缩小左边界
      * 
      */
     public int findMin(int[] nums) {

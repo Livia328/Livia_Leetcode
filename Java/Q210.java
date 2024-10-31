@@ -9,7 +9,7 @@ public class Q210 {
      * 0 -> 1
      * adjacent<integer, integer>
      * 
-     * 一个课从queue里poll出来的时候就是
+     * 一个课从queue里poll出来的时候就是他们应该上的顺序
      */
     public int[] findOrder(int numCourses, int[][] prerequisites) {
         // build graph

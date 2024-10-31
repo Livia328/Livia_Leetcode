@@ -3,6 +3,8 @@ public class Q4 {
      * brute force，用2 pointer把两个数组合并起来
      * 拿一个新数组存起来
      * 寻找中位数
+     * 
+     * 时间复杂度O(n + m), 空间复杂度O(n + m)
      */
     public double findMedianSortedArrays(int[] nums1, int[] nums2) {
         int i = 0, j = 0;
@@ -35,9 +37,21 @@ public class Q4 {
     /**
      * binary search 
      * 
-     * nums1 = [1,3], nums2 = [2]
      * if totalLen is ood -> find the (totalLen/2 + 1)th smallest number
      * if totalLen is even -> find the (totalLen/2), (totalLen/2 + 1)th number
+     * 
+     * 有一个helpter function, findKthElement
+     * 
+     * 比较 num1[p1 + k / 2 - 1], nums2[p2 + k / 2 - 1] -> 谁小的话，那么那个数组的那一半就要被舍弃
+     * 然后每次更新k，现在要找的就是剩下部分中第 k - (index1 - p1 + 1)大的数
+     * 
+     * 1   2   3
+     * p1
+     * 4   5
+     * p2
+     * 
+     * 
+     * 
      */
     public double findMedianSortedArrays2(int[] nums1, int[] nums2) {
         int n = nums1.length, m = nums2.length;
