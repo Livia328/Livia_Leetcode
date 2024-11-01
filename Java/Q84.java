@@ -56,6 +56,11 @@ public class Q84 {
 
     /**
      * 当我们发现有一个柱子比前一个小的话，那么说明这个矩形不能向右拓展了，因此可以计算前面的面积
+     * 比如：
+     * heights = [2,1,5,6,2,3] 
+     * 当我们遇到1的时候
+     * 此时对于heights[0]来说最大的长方形已经确定了
+     * 
      * 本质上还是找到向左和向右延展的高度
      * 
      * 为什么要提前放-1？和上面那个一样，因为在计算的面积的时候
@@ -63,14 +68,20 @@ public class Q84 {
      * left的含义是first bar which is bigger than current onw in the left
      * 所以current bar能形成rectangle的面积是right - left -1
      * 
-     * 1 4 
-     * 1 2 
+     * 比如：
+     * heights = [2,1,5,6,2,3] 
+     * 
+     * stack: -1 0
      */
     public static int largestRectangleArea2(int[] heights) {
         Stack<Integer> stack = new Stack<>();
         int res = 0;
+        // 是为了当碰到最左边的时候也可以保持一致性
+        // 可以之后回来写
         stack.push(-1);
         for (int i = 0; i < heights.length; i++) {
+            // 当遇到一个比stack.peek小的数字的时候
+            // 计算stack.peek的面积
             while(stack.peek() != -1 && heights[i] < heights[stack.peek()]) {
                 int curIndex = stack.pop();
                 int leftMost = stack.peek();

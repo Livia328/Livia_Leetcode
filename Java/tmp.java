@@ -1,57 +1,33 @@
 import java.util.*;
 
 public class tmp {
-    public int minStickers(String[] stickers, String target) {
-        // sort target and each stickers
-        target = sortString(target);
-        for (int i = 0; i < stickers.length; i++) {
-            stickers[i] = sortString(stickers[i]);
-        }
-        // start bfs
-        Queue<String> queue = new ArrayDeque<>();
-        int steps = 0;
-        Set<String> set = new HashSet<>();
-        queue.add(target);
-        set.add(target);
-        while (!queue.isEmpty()) {
-            steps++;
-            int n = queue.size();
-            for (int i = 0; i < n; i++) {
-                String cur = queue.poll();
-                for (String sticker : stickers) {
-                    String remain = filter(sticker, cur);
-                    // 如果返回的remain是空的说明匹配上了
-                    if (remain.isEmpty()) {
-                        return steps;
-                    }
-                    // 如果有被匹配过，或者这个状态没有出现过，那么加入queue
-                    if (!remain.equals(cur) && !set.contains(remain)) {
-                        set.add(remain);
-                        queue.add(remain);
-                    }
-                }
+    /*
+     * 按照开始时间排序
+     * List<int[]> 放前一个时间
+     * 每次和List里的最后一个比较，更新
+     */
+    public int[][] merge(int[][] intervals) {
+        // sort by start time
+        Arrays.sort(intervals, (a, b) -> a[0] - b[0]);
+        List<int[]> tmp = new ArrayList<>();
+        tmp.add(intervals[0]);
+        for (int i = 1; i < intervals.length; i++) {
+            int[] cur = intervals[i];
+            int[] prv = tmp.get(tmp.size() - 1);
+            if (cur[0] <= prv[1]) {
+                // can be merged
+                int newEnd = Math.max(cur[1], prv[1]);
+                tmp.get(tmp.size() - 1)[1] = newEnd;
+            } else {
+                tmp.add(cur);
             }
         }
-        return -1;
-    }
-
-    /*
-     * sort each character of s
-     */
-    public String sortString(String s) {
-        char[] arr = s.toCharArray();
-        Arrays.sort(arr);
-        return new String(arr);
-    }
-
-     /**
-     * 将sticker里有的字母都贴上，返回这个贴纸里找不到的
-     */
-    public String filter(String sticker, String target) {
-        int[] stickerFreq = new int[26];
-        for (char c : sticker.toCharArray()) {
-            stickerFreq[c - 'a']++;
+        int[][] res = new int[tmp.size()][2];
+        for (int i = 0; i < tmp.size(); i++) {
+            res[i] = tmp.get(i);
         }
+        return res;
+    }
         StringBuilder sb = new StringBuilder();
         int[] targetFreq = new int[26];
         for (char c : target.toCharArray()) {
@@ -62,5 +38,4 @@ public class tmp {
             }
         }
         return sb.toString();
-    }
 }
