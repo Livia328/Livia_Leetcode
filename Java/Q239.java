@@ -25,30 +25,179 @@ public class Q239 {
     }
 
     /**
-     * improvement 优化每次都要从头开始找的过程
+     * 因为是滑动窗口，我们需要
+     * 同时从头上pop出去元素
+     * 和
+     * 同时从尾部加入元素
+     * 所以deque
+     * 
+     * 每次加入的时候，把queue里面小于这个数字的全部移出
+     * 因为他们不是max的candidate了
+     * 
+     * 每次pop的时候，判断这个数字还在不在queue里
+     * 因为我们可能之前已经pop出去了
+     * 也就是比较cur == queue.peekFirst
+     * 
+     * 这样就保证了
+     * queue里仅包含窗口内元素
+     * queue里的元素非严格递减
+     * 
+     *  0  1  2  3   4
+     * [1, 5, 0, -1, 5] k = 2
+     * 
+     * [未形成窗口]
+     * push 0
+     * mq: 0
+     * 
+     * push5
+     * mq: 5
+     * res: 5
+     * 
+     * [形成窗口]
+     * pop 0
+     * 因为 5!= 0，所以不用pop
+     * 
+     * push 0
+     * mq: 0 5
+     * res: 5 5
+     * 
+     * pop5
+     * mq: 0
+     * 
+     * push -1
+     * mq: -1, 0
+     * 
+     * res: 5, 5, 0
+     * 
+     * pop0
+     * mq: -1
+     * 
+     * push5
+     * mq: 5
+     * 
      */
-    public static int[] maxSlidingWindow2(int[] nums, int k) {
-        int[] ans = new int[nums.length - k + 1];
-        int index = 0;
-        // store index
-        Deque<Integer> dq = new ArrayDeque<>();
-        for (int i = 0; i < nums.length; i++) {
-            // remove numbers out of the window
-            while (!dq.isEmpty() && dq.peek() < i - k + 1) {
-                dq.poll();
+    public int[] maxSlidingWindow3(int[] nums, int k) {
+        if(nums.length == 0 || k == 0) return new int[0];
+        Deque<Integer> deque = new LinkedList<>();
+        int[] res = new int[nums.length - k + 1];
+        // 未形成窗口
+        for(int i = 0; i < k; i++) {
+            // 把所有不是candidate的全都弄走
+            while(!deque.isEmpty() && deque.peekLast() < nums[i])
+                deque.removeLast();
+            deque.addLast(nums[i]);
+        }
+        res[0] = deque.peekFirst();
+        // 形成窗口后
+        for(int i = k; i < nums.length; i++) {
+            // 如果等于，才remove
+            // 因为有可能这个数之前已经被remove过了
+            if(deque.peekFirst() == nums[i - k])
+                deque.removeFirst();
+            // 去掉所有不可能是candidate的
+            while(!deque.isEmpty() && deque.peekLast() < nums[i])
+                deque.removeLast();
+            deque.addLast(nums[i]);
+            res[i - k + 1] = deque.peekFirst();
+        }
+        return res;
+    }
+
+    /**
+     * 因为是滑动窗口，我们需要
+     * 同时从头上pop出去元素
+     * 和
+     * 同时从尾部加入元素
+     * 所以deque
+     * 
+     * 每次加入的时候，把queue里面小于这个数字的全部移出
+     * 因为他们不是max的candidate了
+     * 
+     * 每次pop的时候，判断这个数字还在不在queue里
+     * 因为我们可能之前已经pop出去了
+     * 也就是比较cur == queue.getFirst
+     * 
+     * -> 基于这两点，自己实现一个MonotonicQueue
+     * 
+     *  0  1  2  3   4
+     * [1, 5, 0, -1, 5] k = 2
+     * 
+     * push 0
+     * mq: 0
+     * 
+     * push5
+     * mq: 5
+     * res: 5
+     * 
+     * pop 0
+     * 因为 5!= 0，所以不用pop
+     * 
+     * push 0
+     * mq: 0 5
+     * res: 5 5
+     * 
+     * pop5
+     * mq: 0
+     * 
+     * push -1
+     * mq: -1, 0
+     * 
+     * res: 5, 5, 0
+     * 
+     * pop0
+     * mq: -1
+     * 
+     * push5
+     * mq: 5
+     * 
+     * 
+     */
+    // 单调队列的实现
+    class MonotonicQueue {
+        LinkedList<Integer> q = new LinkedList<>();
+        public void push(int n) {
+            // 将小于 n 的元素全部删除
+            while (!q.isEmpty() && q.getLast() < n) {
+                q.pollLast();
             }
-            // remove smaller numbers, because they are useless
-            while (!dq.isEmpty() && nums[dq.peekLast()] < nums[i]) {
-                dq.pollLast();
-            }
-            dq.offer(i);
-            // window里已经有k个元素，可以更新答案
-            if (i >= k - 1) {
-                ans[index] = nums[dq.peek()];
-                index++;
+            // 然后将 n 加入尾部
+            q.addLast(n);
+        }
+
+        public int max() {
+            return q.getFirst();
+        }
+
+        public void pop(int n) {
+            if (n == q.getFirst()) {
+                q.pollFirst();
             }
         }
-        return ans;
+    }
+    
+    public int[] maxSlidingWindow2(int[] nums, int k) {
+        MonotonicQueue window = new MonotonicQueue();
+        List<Integer> res = new ArrayList<>();
+
+        for (int i = 0; i < nums.length; i++) {
+            if (i < k - 1) {
+                // 先填满窗口的前 k - 1
+                window.push(nums[i]);
+            } else {
+                // 窗口向前滑动，加入新数字
+                window.push(nums[i]);
+                // 记录当前窗口的最大值
+                res.add(window.max());
+                // 移出旧数字
+                window.pop(nums[i - k + 1]);
+            }
+        }
+        // 需要转成 int[] 数组再返回
+        int[] arr = new int[res.size()];
+        for (int i = 0; i < res.size(); i++) {
+            arr[i] = res.get(i);
+        }
+        return arr;
     }
 
     public static void main(String[] args) {

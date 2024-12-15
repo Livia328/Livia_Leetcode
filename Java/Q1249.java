@@ -5,7 +5,18 @@ import java.util.Stack;
 public class Q1249 {
     /*
      * stack用来消消乐
-     * 同时记录所有invali的index
+     * stack中放index
+     * 
+     * 同时用一个set，记录所有invalid的index
+     * 从左向右遍历，如果是（，就放入stack
+     * 如果是），就看是否有对应的，pop出去
+     * 否则就加入invalid set
+     * 
+     * 结束后，如果stack中还有（
+     * 那么说明这个就是invalid的
+     * 也都加入invalid set中
+     * 
+     * 然后再遍历一遍，构建答案
      */
     public String minRemoveToMakeValid(String s) {
         // stack用来消消乐

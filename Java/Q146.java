@@ -55,11 +55,16 @@ public class Q146 {
 
     /**
      * 自己实现node
+     * 因为需要在O(1)时间内得到key and val，所以需要hashmap
+     * 因为每次访问 cache 中的某个 key，需要将这个元素变为最近使用的，
+     * 也就是说 cache 要支持在任意位置快速插入和删除元素。
+     * 所以可以用node这样一个个接上去
+     * 
      * node1 - node2 - node3...node6
      * left                    right
      * LRU                      most recent
      * 
-     * 
+     * 每次更新的时候，都要将这个node从原来的地方删除，然后放到最右边
      */
     class LRUCache2 {
 

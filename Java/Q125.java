@@ -3,30 +3,28 @@ package Java;
 import java.util.*;
 
 public class Q125 {
-    public static boolean isPalindrome(String s) {
-        // remove all the spaces and make it lower cases
+    /*
+     * 确认input
+     * 是否全是字母？有没有空格？大小写算一样的吗？
+     */
+    public boolean isPalindrome(String s) {
         StringBuilder sb = new StringBuilder();
+        // 去除所有非字母
+        // 将全部都变成小写
         for (int i = 0; i < s.length(); i++) {
             char cur = s.charAt(i);
-            if (cur == ' ' || !Character.isLetterOrDigit(cur)) {
-                continue;
+            if (Character.isLetterOrDigit(cur)) {
+                sb.append(Character.toLowerCase(cur));
             }
-            sb.append(Character.toLowerCase(cur));
-
         }
-        System.out.println(sb);
-        int i = 0, j = sb.length() - 1;
-        while (i <= j) {
-            if (sb.charAt(i) != sb.charAt(j)) {
+        // 左右双指针
+        int left = 0, right = sb.length() - 1;
+        while (left < right) {
+            if (sb.charAt(left) != sb.charAt(right)) {
                 return false;
             }
-            i++; j--;
+            left++; right--;
         }
         return true;
-    }
-
-    public static void main(String[] args) {
-        String s = "0P";
-        System.out.println(isPalindrome(s));
     }
 }

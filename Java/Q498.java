@@ -7,7 +7,7 @@ public class Q498 {
      * res[i + j] = mat[i][j]
      * 
      * 从[0,0]开始朝右上方遍历，更新对应res
-     * 当遍历到边缘(超出边界）的时候，选择下一个开始的位置
+     * 当遍历到边缘的时候，选择下一个开始的位置
      * 
      * 如果是朝右上方，只可能碰到右边缘或者上边缘
      * a, b, c
@@ -24,7 +24,7 @@ public class Q498 {
      * 如果是corner（g），那么下一个应该是h，适用于右移一个单位
      * 
      */
-    public static int[] findDiagonalOrder(int[][] mat) {
+    public int[] findDiagonalOrder(int[][] mat) {
         int m = mat.length, n = mat[0].length;
         int[] res = new int[m * n];
         int i = 0, j = 0, index = 0;
@@ -34,32 +34,33 @@ public class Q498 {
         // 初始方向为右上
         int curDir = 0;
         while (index < m * n) {
+            // 按照当前方向对下个位置进行更新
+            i = i + DIRS[curDir][0];
+            j = j + DIRS[curDir][1];
             // 如果碰壁，要修正方向
-            if (i <= 0 || i >= m - 1 || j <= 0 || j >= n - 1) {
+            if (i < 0 || i >= m || j < 0 || j >= n) {
                 // 如果当前方向是右上
                 if (curDir == 0) {
-                    // 如果碰到右壁, 下移一个，下个位置是[i][j - 1]
-                    if (j >= n - 1) {
-                        i += 1;
-                    } else if (i <= 0) {
-                        // 碰上壁，右移一个，下个位置修正成[i + 1, j]
-                        j += 1;
+                    // 如果碰到右壁, 下个位置是[i + 2][j - 1]
+                    if (j >= n) {
+                        i -= 2 * DIRS[curDir][0];
+                        j -= DIRS[curDir][1];
+                    } else if (i < 0) {
+                        // 碰上壁，下个位置修正成[i + 1, j]
+                        i -= DIRS[curDir][0];
                     }
                 } else { // 当前方向是左下
-                    if (i >= m -  1) {
-                        // 碰到下壁，向右移一个，下个位置应该被修正成[i + 1, j]
-                        j += 1;
-                    } else if (j <= 0) {
-                        // 碰到左壁，向下移一个，下个位置时[i, j + 1]
-                        i += 1;
+                    if (i >= m) {
+                        // 碰到下壁，下个位置应该被修正成[i - 1, j + 2]
+                        i -= DIRS[curDir][0];
+                        j -= 2*DIRS[curDir][1];
+                    } else if (j < 0) {
+                        // 碰到左壁，下个位置时[i, j + 1]
+                        j -= DIRS[curDir][1];
                     }
                 }
                 // 修正位置后要转向
                 curDir = Math.abs(curDir - 1);
-            } else {
-                // 按照当前方向对下个位置进行更新
-                i = i + DIRS[curDir][0];
-                j = j + DIRS[curDir][1];
             }
             res[index++] = mat[i][j];
         }
