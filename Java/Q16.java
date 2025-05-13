@@ -15,7 +15,7 @@ public class Q16 {
      * 
      * 
      */
-    public int threeSumClosest(int[] nums, int target) {
+    public int threeSumClosest1(int[] nums, int target) {
         Arrays.sort(nums);
         int res = Integer.MAX_VALUE;
         for (int i = 0; i < nums.length - 2; i++) {
@@ -28,6 +28,38 @@ public class Q16 {
                     R--;
                 } else if (curSum < target) {
                     L++;
+                } else {
+                    // 如果等于的话，说明正好是target，可以直接返回了
+                    break;
+                }
+            }
+        }
+        return res;
+    }
+
+    /*
+     * 这题并不一定要去除重复的
+     * 但去除可以增加一点点效率
+     */
+    public int threeSumClosest(int[] nums, int target) {
+        Arrays.sort(nums);
+        int res = Integer.MAX_VALUE;
+        for (int i = 0; i < nums.length - 2; i++) {
+            int L = i + 1, R = nums.length - 1;
+            while (L < R) {
+                int curSum = nums[i] + nums[L] + nums[R];
+                res = Math.abs(res - target) < Math.abs(curSum - target) ? res : curSum;
+                if (curSum > target) {
+                    // curSum需要变小，所以移动R
+                    R--;
+                    while (R > L && nums[R + 1] == nums[R]) {
+                        R--;
+                    }
+                } else if (curSum < target) {
+                    L++;
+                    while (R > L && nums[L] == nums[L - 1]) {
+                        L++;
+                    }
                 } else {
                     // 如果等于的话，说明正好是target，可以直接返回了
                     break;

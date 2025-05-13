@@ -13,14 +13,24 @@ public class Q282 {
      * 当前符号是-，当前部分的值为next，cur = cur - next, pre = -next
      * 当前符号是*，当前部分的值为next，此时cur已经累加了prv的影响，所以先剪去pre
      *            cur = cur - prv + prv * next, next = pre * next
+     * 
+     * 123 6
+     * 
+     * backtrack(0, 0, "", "123", 0, 6)
+     * 
+     * i: 0 -> 2
+     *     i = 0):
+     *         backtrack(1, 1, "1", "123", 1, 6)
+     *     i = 1:
+     *         backtrack(12, )
      */
-    List<String> res = new ArrayList<>();
-    public List<String> addOperators(String num, int target) {
+    static List<String> res = new ArrayList<>();
+    public static List<String> addOperators(String num, int target) {
         backtrack(0, 0, "", num, 0, target);
         return res;
     }
 
-    public void backtrack(long pre, long cur, String s, String num, int index, int target) {
+    public static void backtrack(long pre, long cur, String s, String num, int index, int target) {
         if (index == num.length()) {
             if (cur == target) {
                 res.add(s);
@@ -44,5 +54,9 @@ public class Q282 {
                 backtrack(tmp, cur - pre + tmp, s + "*" + next, num, i + 1, target);
             }
         }
+    }
+
+    public static void main(String[] args) {
+        addOperators("123", 6);
     }
 } 
