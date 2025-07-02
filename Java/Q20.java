@@ -5,6 +5,7 @@ public class Q20 {
         Stack<Character> stack = new Stack<>();
         for (int i = 0; i < s.length(); i++) {
             char cur = s.charAt(i);
+            //碰到左括号，把相应的右括号放进stack中
             if (cur == '(') {
                 stack.push(')');
             } else if (cur == '[') {
@@ -12,7 +13,8 @@ public class Q20 {
             } else if (cur == '{') {
                 stack.push('}');
             } else {
-                // close
+                // 意味着有一个close parentheses但是没有对应的open
+                // 直接false
                 if (stack.isEmpty()) {
                     return false;
                 }

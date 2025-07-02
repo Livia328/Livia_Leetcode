@@ -1,7 +1,18 @@
 public class Q61 {
     /*
-     * 从倒数第k个数字开始切割
-     * 即要找到pointer = size - k - 1
+     * 提问，k一定比linkedlist的size小吗
+     * 
+     * 要把linkedlist rotate两次
+     * 比如一开始是1-2-3-4-5 k = 2
+     *               p
+     * 那么就是 4- 5- 1-2-3
+     * 
+     * 所以我们要找到第k - 1个位置
+     * 也就是上面例子中的3
+     * 
+     * 然后把linkedlist分为两段
+     * 然后把前后分离开，把前面的连接到后面上
+     * 
      */
     public ListNode rotateRight(ListNode head, int k) {
         // find the size of linkedlist

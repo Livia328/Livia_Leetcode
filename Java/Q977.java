@@ -21,6 +21,15 @@ public class Q977 {
      * 
      * 每次比较最左和最右的平方，然后存入数组
      * 
+     * 比如[-4, -1, 2, 5]
+     *      l       r
+     * 
+     * compare 16 25
+     * 
+     * res[            25]
+     *                index
+     * 和nums一样的长度
+     * 
      * time: O(n)
      * space: O(n)
      */

@@ -23,7 +23,8 @@ public class Q704 {
 
     /**
      * [left, right)的binary search
-     * 终止条件，while (left < right)， 此时区间为[right, right)，搜索区间为空，可以结束
+     * 终止条件left == right
+     * while (left < right)， 此时区间为[right, right)，搜索区间为空，可以结束
      */
     public int search2(int[] nums, int target) {
         int left = 0, right = nums.length;
