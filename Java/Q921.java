@@ -1,6 +1,7 @@
 public class Q921 {
     /*
      * 首先是只能加不能减
+     * balanceb表示
      * 
      * 从左到右遍历，如果碰到'('，balance++
      * 如果碰到')'， balance--
